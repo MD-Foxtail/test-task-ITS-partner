@@ -62,7 +62,7 @@ static size_t getResponseToString(void* contents, size_t size, size_t nmemb, voi
   return size * nmemb;
 }
 
-bool httpCreator(std::string &strResponse)
+bool httpCreator(std::string &strResponse, std::string http)
 {
   CURL* curl;
   curl = curl_easy_init();
@@ -72,7 +72,7 @@ bool httpCreator(std::string &strResponse)
     return false;
   }
   curl_easy_setopt(curl, CURLOPT_HEADER, 1);
-  curl_easy_setopt(curl, CURLOPT_URL, "http://google.com");
+  curl_easy_setopt(curl, CURLOPT_URL, http.c_str());
   curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, getResponseToString);
   curl_easy_setopt(curl, CURLOPT_WRITEDATA, &strResponse);
   CURLcode result = curl_easy_perform(curl);
@@ -85,21 +85,29 @@ bool httpCreator(std::string &strResponse)
   return true;
 }
 
-int main()
+bool start (std::string &strResponse, std::string http)
 {
-  std::string strResponse;
   while (true)
-    if (!httpCreator(strResponse))
+    if (!httpCreator(strResponse, http))
     {
       char restartHttp;
       std::cout << "create a new http request?(y - yes, n - no)\n";
       std::cin >> restartHttp;
       if (restartHttp != 'y')
-        return 0;
+        return false;
     }
-    else break;
-    std::cout << strResponse;
+    else return true;
+  return true;
+}
+
+int main()
+{
+  std::string strResponse;
+  start (strResponse, "http://google.com");
   struct time _time;
   getTime(strResponse, _time);
   setTime(_time);
+  strResponse = "";
+  start (strResponse, "https://example.com");
+  std::cout << strResponse << "\n";
 }
