@@ -13,24 +13,18 @@ bool getTime(std::string &str, struct time &_time)
   const std::string monthName[12] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
   std::string word = "date:";
   int i = findWord(str, word);
-  if (i == -1)
-  {
-    std::cout << "The string does not contain a date\n";
-    return false;
-  }
-  _time.day = currNum(str, i);
-  i = findS(str, i, WORD);
-  getS(str, word, i);
+  _time.day = currS(str, i);
+  currS(str, word, i);
   for (int j = 0; j < 12; j++)
     if (word == monthName[j])
       {
         _time.month = j;
         break;
       }
-  _time.year = currNum(str, i);
-  _time.hour = nextNum(str, i);
-  _time.min = nextNum(str, i);
-  _time.sec = nextNum(str, i);
+  _time.year = currS(str, i);
+  _time.hour = nextS(str, i);
+  _time.min = nextS(str, i);
+  _time.sec = nextS(str, i);
   std::cout << _time.day << " " << _time.month + 1 << " " << _time.year << " " << _time.hour << ":" << _time.min << ":" << _time.sec;
   return true;
 }

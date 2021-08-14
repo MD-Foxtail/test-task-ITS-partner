@@ -111,27 +111,27 @@ bool getS(std::string &str, std::string &word ,int start)
   return true;
 }
 
-int nextNum(std::string &str, int &i)
+int nextS(std::string &str, int &i)
 {
   i = endS(str, i, NUM);
   i = findS(str, i, NUM);
   return getS(str, i);
 }
 
-int currNum(std::string &str, int &i)
+int currS(std::string &str, int &i)
 {
   i = findS(str, i, NUM);
   return getS(str, i);
 }
 
-int nextWord(std::string &str, std::string &word, int &i)
+bool nextS(std::string &str, std::string &word, int &i)
 {
   i = endS(str, i, WORD);
   i = findS(str, i, WORD);
   return getS(str, word, i);
 }
 
-int currWord(std::string &str, std::string &word, int &i)
+bool currS(std::string &str, std::string &word, int &i)
 {
   i = findS(str, i, WORD);
   return getS(str, word, i);
