@@ -1,31 +1,58 @@
 #include <iostream>
 #include <curl/curl.h>
 #include <string>
+#include <cstdlib>
 #include "parS.h"
+
+const std::string monthName[12] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+const int UTC = +3;
 
 struct time
 {
   int day, month, year, hour, min, sec;
 };
 
+void timeElToStr(std::string &newTime, int elem)
+{
+  if (elem < 10)
+    newTime += "0";
+  newTime += std::to_string(elem);
+}
+
+void timeToStr(std::string &newTime, struct time &_time)
+{
+  timeElToStr(newTime, _time.month);
+  timeElToStr(newTime, _time.day);
+  timeElToStr(newTime, _time.hour);
+  timeElToStr(newTime, _time.min);
+  newTime += std::to_string(_time.year) + ".";
+  timeElToStr(newTime, _time.sec);
+}
+
+bool setTime(struct time &_time)
+{
+  std::string newTime = "date ";
+  timeToStr(newTime, _time);
+  system(newTime.c_str());
+  return true;
+}
+
 bool getTime(std::string &str, struct time &_time)
 {
-  const std::string monthName[12] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
-  std::string word = "date:";
+  std::string word = "Date:";
   int i = findWord(str, word);
   _time.day = currS(str, i);
   currS(str, word, i);
   for (int j = 0; j < 12; j++)
     if (word == monthName[j])
       {
-        _time.month = j;
+        _time.month = j + 1;
         break;
       }
   _time.year = currS(str, i);
-  _time.hour = nextS(str, i);
+  _time.hour = nextS(str, i) + UTC;
   _time.min = nextS(str, i);
   _time.sec = nextS(str, i);
-  std::cout << _time.day << " " << _time.month + 1 << " " << _time.year << " " << _time.hour << ":" << _time.min << ":" << _time.sec;
   return true;
 }
 
@@ -45,7 +72,7 @@ bool httpCreator(std::string &strResponse)
     return false;
   }
   curl_easy_setopt(curl, CURLOPT_HEADER, 1);
-  curl_easy_setopt(curl, CURLOPT_URL, "https://www.google.ru/");
+  curl_easy_setopt(curl, CURLOPT_URL, "http://google.com");
   curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, getResponseToString);
   curl_easy_setopt(curl, CURLOPT_WRITEDATA, &strResponse);
   CURLcode result = curl_easy_perform(curl);
@@ -71,6 +98,8 @@ int main()
         return 0;
     }
     else break;
+    std::cout << strResponse;
   struct time _time;
   getTime(strResponse, _time);
+  setTime(_time);
 }
