@@ -65,7 +65,7 @@ int endS(std::string &str, int start = 0, comparisonType t = NUM)
 {
   if (start >= str.size())
   {
-    std::cout << "endNum() received invalid input data\n";
+    std::cout << "endS() received invalid input data\n";
     return -1;
   }
   int i = start;
@@ -86,7 +86,7 @@ int getS(std::string &str, int start = 0)
 {
   if (start >= str.size())
   {
-    std::cout << "getNum() received invalid input data\n";
+    std::cout << "getS() received invalid input data\n";
     return -1;
   }
   int ret = 0;
@@ -142,6 +142,18 @@ bool getTime(std::string &str, struct time &_time)
         _time.month = j;
         break;
       }
+  i = findS(str, i, NUM);
+  _time.year = getS(str, i);
+  i = endS(str, i, NUM);
+  i = findS(str, i, NUM);
+  _time.hour = getS(str, i);
+  i = endS(str, i, NUM);
+  i = findS(str, i, NUM);
+  _time.min = getS(str, i);
+  i = endS(str, i, NUM);
+  i = findS(str, i, NUM);
+  _time.sec = getS(str, i);
+  std::cout << _time.day << " " << _time.month + 1 << " " << _time.year << " " << _time.hour << ":" << _time.min << ":" << _time.sec;
   return true;
 }
 
