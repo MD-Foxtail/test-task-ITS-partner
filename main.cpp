@@ -3,14 +3,20 @@
 #include <string>
 #include <limits.h>
 
+enum comparisonType
+{
+  NUM,
+  WORD
+};
+
 struct time
 {
   int day, month, year, hour, min, sec;
 };
 
-int findWord(std::string &str, std::string &word, int start = 0, int finish = -1)
+int findWord(std::string &str, std::string &word, int start = 0)
 {
-  if ((start > finish && finish >= 0) || start >= str.size())
+  if (start >= str.size())
   {
     std::cout << "findWord() received invalid input data\n";
     return -1;
@@ -18,7 +24,7 @@ int findWord(std::string &str, std::string &word, int start = 0, int finish = -1
   if (word == "")
     return -1;
   int i = start, j = 0, ret = 0;
-  while (i < str.size() && (i <= finish || finish < 0))
+  while (i < str.size())
   {
     if (str[i] == word[j])
     {
@@ -34,52 +40,58 @@ int findWord(std::string &str, std::string &word, int start = 0, int finish = -1
   return -1;
 }
 
-int findNum(std::string &str, int start = 0, int finish = -1)
+int findS(std::string &str, int start = 0, comparisonType t = NUM)
 {
-  if ((start > finish && finish >= 0) || start >= str.size())
+  if (start >= str.size())
   {
-    std::cout << "findNum() received invalid input data\n";
+    std::cout << "findS() received invalid input data\n";
     return -1;
   }
   int i = start;
-  while (i < str.size() && (i <= finish || finish < 0) && (str[i] < '0' || str[i] > '9'))
-    i++;
-  if (i >= str.size() || (i > finish && finish >= 0))
+  if (t == WORD)
+    while (i < str.size() && !((str[i] >= 'a' && str[i] <= 'z') || (str[i] >= 'A' && str[i] <= 'Z')))
+      i++;
+  else
+    while (i < str.size() && (str[i] < '0' || str[i] > '9'))
+      i++;
+  if (i >= str.size())
   {
-    std::cout << "The string does not contain a number\n";
     return -1;
   }
   return i;
 }
 
-int endNum(std::string &str, int start = 0, int finish = -1)
+int endS(std::string &str, int start = 0, comparisonType t = NUM)
 {
-  if ((start > finish && finish >= 0) || start >= str.size())
+  if (start >= str.size())
   {
     std::cout << "endNum() received invalid input data\n";
     return -1;
   }
   int i = start;
-  while (i < str.size() && (i <= finish || finish < 0) && str[i] >= '0' && str[i] <= '9')
-    i++;
-  if (i >= str.size() || (i > finish && finish >= 0))
+  if (t == WORD)
+    while (i < str.size() && ((str[i] >= 'a' && str[i] <= 'z') || (str[i] >= 'A' && str[i] <= 'Z')))
+      i++;
+  else
+    while (i < str.size() && str[i] >= '0' && str[i] <= '9')
+      i++;
+  if (i >= str.size() || i == start)
   {
-    std::cout << "the number is at the end of the string\n";
     return -1;
   }
   return i;
 }
 
-int getNum(std::string &str, int start = 0, int finish = -1)
+int getS(std::string &str, int start = 0)
 {
-  if ((start > finish && finish >= 0) || start >= str.size())
+  if (start >= str.size())
   {
     std::cout << "getNum() received invalid input data\n";
     return -1;
   }
   int ret = 0;
   int i = start;
-  while (i < str.size() && (i <= finish || finish < 0) && str[i] >= '0' && str[i] <= '9')
+  while (i < str.size() && str[i] >= '0' && str[i] <= '9')
   {
     int temp = INT_MAX - (str[i] - '0');
     if (temp / 10 < ret || (temp / 10 == ret && temp % 10 > 0))
@@ -93,6 +105,23 @@ int getNum(std::string &str, int start = 0, int finish = -1)
   return ret;
 }
 
+bool getS(std::string &str, std::string &word ,int start = 0)
+{
+  if (start >= str.size())
+  {
+    std::cout << "getWord() received invalid input data\n";
+    return false;
+  }
+  word = "";
+  int i = start;
+  while (i < str.size() && ((str[i] >= 'a' && str[i] <= 'z') || (str[i] >= 'A' && str[i] <= 'Z')))
+  {
+    word = word + str[i];
+    i++;
+  }
+  return true;
+}
+
 bool getTime(std::string &str, struct time &_time)
 {
   const std::string monthName[12] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
@@ -103,14 +132,16 @@ bool getTime(std::string &str, struct time &_time)
     std::cout << "The string does not contain a date\n";
     return false;
   }
-  i = findNum(str, i);
-  _time.day = getNum(str, i);
-  i = endNum(str, i);
-  if (_time.day == -1 || _time.day >= 30)
-  {
-    std::cout << "The string does not contain a date\n";
-    return false;
-  }
+  i = findS(str, i, NUM);
+  _time.day = getS(str, i);
+  i = findS(str, i, WORD);
+  getS(str, word, i);
+  for (int j = 0; j < 12; j++)
+    if (word == monthName[j])
+      {
+        _time.month = j;
+        break;
+      }
   return true;
 }
 
