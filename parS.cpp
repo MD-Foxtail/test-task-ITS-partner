@@ -2,9 +2,13 @@
 #include <string>
 #include <climits>
 #include "parS.h"
+#include "logger.h"
+
+LOG_CONNECT;
 
 int findWord(std::string &str, std::string &word, int start)
 {
+  LOG_INFO("I'm here!!");
   if (start >= str.size())
   {
     std::cout << "findWord() received invalid input data\n";

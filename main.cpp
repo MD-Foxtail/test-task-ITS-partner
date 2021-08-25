@@ -3,7 +3,9 @@
 #include <string>
 #include <cstdlib>
 #include "parS.h"
+#include "logger.h"
 
+LOG_START("PC-1", "log.txt");
 const std::string monthName[12] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 const int UTC = +3;
 
@@ -102,6 +104,7 @@ bool start (std::string &strResponse, std::string http)
 
 int main()
 {
+  LOG_INFO("logger!!!");
   std::string strResponse;
   start (strResponse, "http://google.com");
   struct time _time;
@@ -110,4 +113,5 @@ int main()
   strResponse = "";
   start (strResponse, "https://example.com");
   std::cout << strResponse << "\n";
+  LOG_INFO("newTime");
 }
