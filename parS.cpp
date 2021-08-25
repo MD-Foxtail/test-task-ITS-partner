@@ -8,14 +8,11 @@ LOG_CONNECT;
 
 int findWord(std::string &str, std::string &word, int start)
 {
-  LOG_INFO("I'm here!!");
-  if (start >= str.size())
+  if (start >= str.size() || word == "")
   {
-    std::cout << "findWord() received invalid input data\n";
+    LOG_ERROR("findWord(): received invalid input data");
     return -1;
   }
-  if (word == "")
-    return -1;
   int i = start, j = 0, ret = 0;
   while (i < str.size())
   {
@@ -30,6 +27,7 @@ int findWord(std::string &str, std::string &word, int start)
     else j = 0;
     i++;
   }
+  LOG_ERROR("findWord(): The text does not contain the word '" + word + "'");
   return -1;
 }
 
@@ -37,7 +35,7 @@ int findS(std::string &str, int start, comparisonType t)
 {
   if (start >= str.size())
   {
-    std::cout << "findS() received invalid input data\n";
+    LOG_ERROR("findS(): received invalid input data");
     return -1;
   }
   int i = start;
@@ -49,6 +47,7 @@ int findS(std::string &str, int start, comparisonType t)
       i++;
   if (i >= str.size())
   {
+    LOG_ERROR("findS(): The text does not contain '" + str + "'")
     return -1;
   }
   return i;
@@ -58,7 +57,7 @@ int endS(std::string &str, int start, comparisonType t)
 {
   if (start >= str.size())
   {
-    std::cout << "endS() received invalid input data\n";
+    LOG_ERROR("endS(): received invalid input data");
     return -1;
   }
   int i = start;
@@ -70,6 +69,9 @@ int endS(std::string &str, int start, comparisonType t)
       i++;
   if (i >= str.size())
   {
+    if (t == WORD)
+      LOG_ERROR("endS(): The word completes the text. It is impossible to find the next character after the end of the word");
+    if (t == NUM) LOG_ERROR("endS(): The number completes the text. It is impossible to find the next character after the end of the number");
     return -1;
   }
   return i;
@@ -79,7 +81,7 @@ int getS(std::string &str, int start)
 {
   if (start >= str.size())
   {
-    std::cout << "getS() received invalid input data\n";
+    LOG_ERROR("getS(): received invalid input data");
     return -1;
   }
   int ret = 0;
@@ -89,7 +91,7 @@ int getS(std::string &str, int start)
     int temp = INT_MAX - (str[i] - '0');
     if (temp / 10 < ret || (temp / 10 == ret && temp % 10 > 0))
     {
-      std::cout << "The number in the string exceeds the maximum int value\n";
+      LOG_ERROR("getS(): The number in the text exceeds the maximum int value");
       return -1;
     }
     else ret = ret * 10 + (str[i] - '0');
@@ -102,7 +104,7 @@ bool getS(std::string &str, std::string &word ,int start)
 {
   if (start >= str.size())
   {
-    std::cout << "getWord() received invalid input data\n";
+    LOG_ERROR("getS() received invalid input data\n");
     return false;
   }
   word = "";

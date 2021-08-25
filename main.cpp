@@ -70,7 +70,7 @@ bool httpCreator(std::string &strResponse, std::string http)
   curl = curl_easy_init();
   if (!curl)
   {
-    std::cout << "init failed\n";
+    LOG_WARN("Сurl initialization failed");
     return false;
   }
   curl_easy_setopt(curl, CURLOPT_HEADER, 1);
@@ -81,7 +81,9 @@ bool httpCreator(std::string &strResponse, std::string http)
   curl_easy_cleanup(curl);
   if (result != CURLE_OK)
   {
-    std::cout << "download problem: " << curl_easy_strerror(result) << "\n";
+    std::string warn = curl_easy_strerror(result);
+    warn = "Download problem: " + warn;
+    LOG_WARN(warn);
     return false;
   }
   return true;
@@ -104,14 +106,22 @@ bool start (std::string &strResponse, std::string http)
 
 int main()
 {
-  LOG_INFO("logger!!!");
+  LOG_INFO("The time translation program for an http request has started working!");
   std::string strResponse;
-  start (strResponse, "http://google.com");
+  if (!start (strResponse, "http://google.com"))
+  {
+    LOG_WARN("Сouldn't access the site ):")
+    return 0;
+  }
+  LOG_INFO("http request completed");
   struct time _time;
   getTime(strResponse, _time);
+  LOG_INFO("The exact time was received");
   setTime(_time);
+  LOG_INFO("The exact time was set");
   strResponse = "";
   start (strResponse, "https://example.com");
   std::cout << strResponse << "\n";
-  LOG_INFO("newTime");
+  LOG_INFO("Data from the site example.com output to the console");
+  LOG_INFO("The program has completed its work")
 }
